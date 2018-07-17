@@ -57,50 +57,51 @@
 
         <script>
 
-        var getProduct = function(id) {
-            fetch(`http://localhost:4567/customers/${id}`, { headers: { "Content-Type": "application/json; charset=utf-8" }})
-            .then(res => res.json()) // parse response as JSON (can be res.text() for plain response)
-            .then(response => {
-                let customer = response;
-                let details = response.data;
-                let detailView = document.querySelector('.detail-view');
-                let content = document.createElement('div');
-                content.innerHTML = `Name: ${details.firstName} ${details.lastName} Age: ${details.age} Company: ${details.company}`
-                detailView.innerHTML = '';
-                detailView.appendChild(content);
-
-                // here you do what you want with response
-            })
-            .catch(err => {
-                console.log("Error fetching customer", err);
-            });
-        }
-        
-        fetch("http://localhost:4567/customers", { headers: { "Content-Type": "application/json; charset=utf-8" }})
-            .then(res => res.json()) // parse response as JSON (can be res.text() for plain response)
-            .then(response => {
-                let customers = response;
-                let customerList = document.querySelector('.customers');
-                
-                for(let i = 0; i < customers.length; i++) {
-                    let details = customers[i].data;
-                    let customerListItem = document.createElement('div');
-                    customerListItem.modelData = response[i];
-                    customerListItem.addEventListener('click', (e) => {
-                        getProduct(e.target.modelData.id);
-                    })
-                    let liStr = `Name: ${details.firstName} ${details.lastName}`;
-                    customerListItem.innerHTML = liStr;
-                    customerList.appendChild(customerListItem);
+            class App {
+                constructor() {
+                    this.getCustomerList();
                 }
-
-
-                // here you do what you want with response
-            })
-            .catch(err => {
-                console.log("Error fetching customer list", err);
-            });
-        
+                getCustomer(id) {
+                    fetch(`http://localhost:4567/customers/${id}`, { headers: { "Content-Type": "application/json; charset=utf-8" }})
+                    .then(res => res.json()) // parse response as JSON (can be res.text() for plain response)
+                    .then(response => {
+                        let customer = response;
+                        let details = response.data;
+                        let detailView = document.querySelector('.detail-view');
+                        let content = document.createElement('div');
+                        content.innerHTML = `Name: ${details.firstName} ${details.lastName} Age: ${details.age} Company: ${details.company}`
+                        detailView.innerHTML = '';
+                        detailView.appendChild(content);
+                    })
+                    .catch(err => {
+                        console.log("Error fetching customer", err);
+                    });
+                }
+                getCustomerList() {
+                    fetch("http://localhost:4567/customers", { headers: { "Content-Type": "application/json; charset=utf-8" }})
+                    .then(res => res.json()) // parse response as JSON (can be res.text() for plain response)
+                    .then(response => {
+                        let customers = response;
+                        let customerList = document.querySelector('.customers');
+                        
+                        for(let i = 0; i < customers.length; i++) {
+                            let details = customers[i].data;
+                            let customerListItem = document.createElement('div');
+                            customerListItem.modelData = response[i];
+                            customerListItem.addEventListener('click', (e) => this.getCustomer(e.target.modelData.id));
+                            let liStr = `Name: ${details.firstName} ${details.lastName}`;
+                            customerListItem.innerHTML = liStr;
+                            customerList.appendChild(customerListItem);
+                        }
+                    })
+                    .catch(err => {
+                        console.log("Error fetching customer list", err);
+                    });
+                }
+                
+            }
+            
+            new App();
         </script>
     </body>
 </html>
