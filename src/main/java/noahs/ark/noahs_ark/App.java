@@ -2,33 +2,29 @@ package noahs.ark.noahs_ark;
 
 import com.google.api.core.ApiFuture;
 import com.google.auth.oauth2.GoogleCredentials;
-import com.google.cloud.firestore.CollectionReference;
 import com.google.cloud.firestore.DocumentReference;
 import com.google.cloud.firestore.DocumentSnapshot;
 import com.google.cloud.firestore.Firestore;
 import com.google.cloud.firestore.QueryDocumentSnapshot;
 import com.google.cloud.firestore.QuerySnapshot;
+import com.google.cloud.firestore.WriteResult;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
 import com.google.firebase.cloud.FirestoreClient;
 import com.google.gson.*;
 import static spark.Spark.*;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.EmptyStackException;
-import java.util.HashSet;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutionException;
 
-import javax.annotation.Nullable;
-
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.io.InputStream;
 
 class CustomerObj {
@@ -41,6 +37,34 @@ class CustomerObj {
 	}
 }
 
+class RequestBody {
+	String firstName;
+	String lastName;
+	String company;
+	int age;
+	
+	RequestBody(String firstName, String lastName, String company, int age) {
+		this.firstName = firstName;
+		this.lastName = lastName;
+		this.company = company;
+		this.age = age;
+	}
+	
+	String getFirstName() {
+		return this.firstName;
+	}
+	
+	String getLastName() {
+		return this.lastName;
+	}
+	int getAge() {
+		return this.age;
+	}
+	String getCompany() {
+		return this.company;
+	}
+}
+
 public class App {
 	
     public static void main(String[] args) throws ExecutionException, Throwable {
@@ -50,6 +74,23 @@ public class App {
 		    .setCredentials(credentials)
 		    .build();
 		FirebaseApp.initializeApp(options);
+		Firestore db = FirestoreClient.getFirestore();
+		post("/customers/add", (request, response) -> {
+			System.out.println(request.body());
+			Map<String, Object> data = new HashMap<>();
+			DocumentReference newDoc = db.collection("customers").document();
+			Gson gson = new Gson();
+			ObjectMapper oMapper = new ObjectMapper();
+			oMapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
+			RequestBody requestBody = gson.fromJson(request.body(), RequestBody.class);
+	        data.put("firstName", requestBody.getFirstName());
+	        data.put("lastName", requestBody.getLastName());
+	        data.put("age", requestBody.getAge());
+	        data.put("company", requestBody.getCompany());
+	        ApiFuture<WriteResult> result = newDoc.set(data);
+	        System.out.println("Update time : " + result.get().getUpdateTime());
+		    return "User Added with ID: " + newDoc.getId();
+		});
     	options("/*",
     	        (request, response) -> {
 
@@ -73,7 +114,6 @@ public class App {
     	before((request, response) -> response.header("Access-Control-Allow-Origin", "*"));
     	get("/customers", (req, res) -> {
     		CountDownLatch done = new CountDownLatch(1);
-    		Firestore db = FirestoreClient.getFirestore();
     		ApiFuture<QuerySnapshot> query = db.collection("customers").get();
     		
     		QuerySnapshot querySnapshot = query.get();
@@ -101,7 +141,6 @@ public class App {
     	});
         get("/customers/:id", (req, res) -> {
         	CountDownLatch done = new CountDownLatch(1);
-    		Firestore db = FirestoreClient.getFirestore();
         	String id = req.params("id");
         	CustomerObj customerObj = null;
         	Gson gson = new Gson();
@@ -119,6 +158,6 @@ public class App {
     		return gson.toJson(customerObj);
  
         });
-        
+
     }
 }
