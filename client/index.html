@@ -15,9 +15,32 @@
                     <h1>Customers</h1>
                     <div class="customers"></div>
                 </div>
-                <div class="col s4">
+                <div class="col s4 edit-view">
                     <h1>Details:</h1>
                     <div class="detail-view"></div>
+                        <div class="row">
+                            <div class="input-field col s6">
+                                <input placeholder="First Name" id="firstNameEdit" type="text" class="validate">
+                                <label for="firstNameEdit">First Name</label>
+                            </div>
+                            <div class="input-field col s6">
+                                <input placeholder="Last Name" id="lastNameEdit" type="text" class="validate">
+                                <label for="lastNameEdit">Last Name</label>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="input-field col s6">
+                                <input placeholder="Age" id="ageEdit" type="text" class="validate">
+                                <label for="ageEdit">Age</label>
+                            </div>
+                            <div class="input-field col s6">
+                                <input placeholder="Company" id="companyEdit" type="text" class="validate">
+                                <label for="companyEdit">Company</label>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <a class="waves-effect waves-light btn update-customer">Update</a>
+                        </div>
                 </div>
                 <div class="col s4">
             <div class="row">
@@ -56,20 +79,50 @@
         </div>
 
         <script>
+            let addButton = document.querySelector('.add-customer');
+            let updatebutton = document.querySelector('.update-customer');
 
             class App {
                 constructor() {
                     this.getCustomerList();
-
-                    let addButton = document.querySelector('.add-customer');
+                   
+                    updatebutton.addEventListener('click', this.updateCustomer);
                     addButton.addEventListener('click', this.addCustomer);
+                }
+                updateCustomer(e) {
+                    let firstName = document.querySelector('#firstNameEdit').value;
+                    let lastName = document.querySelector('#lastNameEdit').value;
+                    let company = document.querySelector('#companyEdit').value;
+                    let age = parseInt(document.querySelector('#ageEdit').value);
+
+                    let id = e.target.modelData;
+
+                    let payload = {
+                        "firstName": firstName,
+                        "lastName": lastName,
+                        "company": company,
+                        "age": age
+                    }
+
+                    let xhr = new XMLHttpRequest();
+                    xhr.open("PUT", `http://localhost:4567/customers/update/${id}`, true);
+
+                    //Send the proper header information along with the request
+                    xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+
+                    xhr.onreadystatechange = function() {//Call a function when the state changes.
+                        if(this.readyState == XMLHttpRequest.DONE && this.status == 200) {
+                            // Request finished. Do processing here.
+                            window['App'].getCustomerList();
+                        }
+                    }
+                    xhr.send(JSON.stringify(payload)); 
                 }
                 addCustomer(e) {
                     let firstName = document.querySelector('#first_name').value;
                     let lastName = document.querySelector('#last_name').value;
                     let company = document.querySelector('#company').value;
                     let age = parseInt(document.querySelector('#age').value);
-                    let that = this;
 
                     let payload = {
                         "firstName": firstName,
@@ -100,8 +153,15 @@
                         let details = response.data;
                         let detailView = document.querySelector('.detail-view');
                         let content = document.createElement('div');
+                        let dets = [details.firstName, details.lastName, details.age, details.company];
+                        let inputs = document.querySelectorAll('.edit-view input');
+                        for(let i = 0; i < dets.length; i++) {
+                            inputs[i].value = dets[i];
+                        }
                         content.innerHTML = `Name: ${details.firstName} ${details.lastName} Age: ${details.age} Company: ${details.company}`
                         detailView.innerHTML = '';
+                        detailView.modelData = id;
+                        updatebutton.modelData = id;
                         detailView.appendChild(content);
                     })
                     .catch(err => {

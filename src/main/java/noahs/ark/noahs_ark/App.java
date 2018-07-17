@@ -75,8 +75,8 @@ public class App {
 		    .build();
 		FirebaseApp.initializeApp(options);
 		Firestore db = FirestoreClient.getFirestore();
+
 		post("/customers/add", (request, response) -> {
-			System.out.println(request.body());
 			Map<String, Object> data = new HashMap<>();
 			DocumentReference newDoc = db.collection("customers").document();
 			Gson gson = new Gson();
@@ -89,7 +89,22 @@ public class App {
 	        data.put("company", requestBody.getCompany());
 	        ApiFuture<WriteResult> result = newDoc.set(data);
 	        System.out.println("Update time : " + result.get().getUpdateTime());
-		    return "User Added with ID: " + newDoc.getId();
+	        return "User Added with ID: " + newDoc.getId();
+		});
+		put("/customers/update/:id", (request, response) -> {
+			Map<String, Object> data = new HashMap<>();
+			String id = request.params("id");
+			DocumentReference updatedoc = db.collection("customers").document(id);
+			Gson gson = new Gson();
+			ObjectMapper oMapper = new ObjectMapper();
+			oMapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
+			RequestBody requestBody = gson.fromJson(request.body(), RequestBody.class);
+	        data.put("firstName", requestBody.getFirstName());
+	        data.put("lastName", requestBody.getLastName());
+	        data.put("age", requestBody.getAge());
+	        data.put("company", requestBody.getCompany());
+	        ApiFuture<WriteResult> result = updatedoc.set(data);
+	        return "User ID updated with: " + result.get().toString();
 		});
     	options("/*",
     	        (request, response) -> {
