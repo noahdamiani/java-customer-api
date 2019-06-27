@@ -7,7 +7,7 @@ import img4 from 'assets/images/users/4.jpg';
 
 import moment from "moment";
 
-import UserEditor from '../user-editor/editor';
+import UserEditor from '../customers/editor';
 
 import {
 	Card,
