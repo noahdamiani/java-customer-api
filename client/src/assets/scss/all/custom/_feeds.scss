@@ -38,3 +38,16 @@
 .add-user-errors {
     padding: 2em;
 }
+
+.add-user {
+    margin-bottom: 2em;
+}
+
+.edit-customer-icons {
+    display: flex;
+
+    > div {
+        margin-right: 10px;
+        cursor: pointer;
+    }
+}

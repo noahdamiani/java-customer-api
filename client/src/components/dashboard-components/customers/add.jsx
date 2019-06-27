@@ -16,6 +16,7 @@ import {
 
 class UserAdd extends React.Component {
     state = {
+        addPaneHidden: true,
         fields: {
             firstName: "",
             lastName: "",
@@ -57,16 +58,21 @@ class UserAdd extends React.Component {
                 const { firstName, lastName } = this.state.fields;
                 this.setState({addedUser: {firstName, lastName}});
                 setTimeout(() => {
-                    this.setState({addedUser: null});
+                    this.setState({addedUser: null, addPaneHidden: true});
                 }, 5000);
             });
         }
-
     }
+
+    showUserPane = () => {
+        this.setState({addPaneHidden: false});
+    }
+
 	render = () => {
         const { fields, addedUser } = this.state;
         return (
-            <Card>
+            <div>
+                {!this.state.addPaneHidden ? <Card>
                  { addedUser ? <Row className="add-user-errors">
                    <Col sm={12}><Alert color="success">{addedUser.firstName} {addedUser.lastName} was successfully enrolled.</Alert></Col>
                 </Row> : ""}
@@ -106,7 +112,8 @@ class UserAdd extends React.Component {
                 </CardBody>
 
                 <Button onClick={() => this.addCustomer()}>Save</Button>
-            </Card>
+            </Card> : <Button className="add-user" onClick={() => this.showUserPane()}><i className="fas fa-plus"></i> Add a Customer</Button>}
+            </div>
         )
     }
 }

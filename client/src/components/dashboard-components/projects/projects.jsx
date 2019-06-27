@@ -176,9 +176,9 @@ class Projects extends React.Component {
 										{data.company}
 									</td>
 									<td>{data.enrolledAt ? moment(data.enrolledAt).format("MMMM Do YYYY") : "N/A"}</td>
-									<td>
-										<div onClick={() => this.editCustomer(id, data, index)}>edit</div>
-										<div onClick={() => this.deleteCustomer(id, index)}>delete</div>
+									<td class="edit-customer-icons">
+										<div onClick={() => this.editCustomer(id, data, index)}><i class="fas fa-edit"></i></div>
+										<div onClick={() => this.deleteCustomer(id, index)}><i class="fas fa-trash-alt"></i></div>
 									</td>
 								</tr>
 							

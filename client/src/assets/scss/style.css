@@ -8471,6 +8471,15 @@ Preloader
 .add-user-errors {
   padding: 2em; }
 
+.add-user {
+  margin-bottom: 2em; }
+
+.edit-customer-icons {
+  display: flex; }
+  .edit-customer-icons > div {
+    margin-right: 10px;
+    cursor: pointer; }
+
 #main-wrapper[data-layout='vertical'], #main-wrapper[data-layout='horizontal'] {
   /*This is for the logo bg*/
   /*This is for the sidebar bg*/ }
