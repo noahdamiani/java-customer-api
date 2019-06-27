@@ -10,7 +10,7 @@ import {
     Row,
     Col
 } from 'reactstrap';
-import { SalesSummary, Projects, Feeds } from 'components/dashboard-components';
+import { SalesSummary, Projects, Feeds, AddUser } from 'components/dashboard-components';
 
 import img1 from '../../assets/images/big/img1.jpg';
 import img2 from '../../assets/images/big/img2.jpg';
@@ -20,6 +20,11 @@ class Starter extends React.Component {
     render() {
         return (
             <div>
+                <Row>
+                  <Col sm={12}>
+                    <AddUser />
+                  </Col>
+                </Row>
                 <Row>
                     <Col sm={12}>
                         <Projects />

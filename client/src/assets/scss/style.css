@@ -8468,6 +8468,9 @@ Preloader
     padding: 0 1em;
     box-sizing: border-box; }
 
+.add-user-errors {
+  padding: 2em; }
+
 #main-wrapper[data-layout='vertical'], #main-wrapper[data-layout='horizontal'] {
   /*This is for the logo bg*/
   /*This is for the sidebar bg*/ }
