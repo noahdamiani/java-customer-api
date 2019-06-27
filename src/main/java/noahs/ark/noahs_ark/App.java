@@ -41,12 +41,14 @@ class RequestBody {
 	String firstName;
 	String lastName;
 	String company;
+	String email;
 	int age;
 	
-	RequestBody(String firstName, String lastName, String company, int age) {
+	RequestBody(String firstName, String lastName, String company, String email, int age) {
 		this.firstName = firstName;
 		this.lastName = lastName;
 		this.company = company;
+		this.email = email;
 		this.age = age;
 	}
 	
@@ -57,11 +59,17 @@ class RequestBody {
 	String getLastName() {
 		return this.lastName;
 	}
+	
 	int getAge() {
 		return this.age;
 	}
+	
 	String getCompany() {
 		return this.company;
+	}
+	
+	String getEmail() {
+		return this.email;
 	}
 }
 
@@ -88,6 +96,7 @@ public class App {
 			RequestBody requestBody = gson.fromJson(request.body(), RequestBody.class);
 	        data.put("firstName", requestBody.getFirstName());
 	        data.put("lastName", requestBody.getLastName());
+	        data.put("email", requestBody.getEmail());
 	        data.put("age", requestBody.getAge());
 	        data.put("company", requestBody.getCompany());
 	        ApiFuture<WriteResult> result = newDoc.set(data);
@@ -108,6 +117,7 @@ public class App {
 			RequestBody requestBody = gson.fromJson(request.body(), RequestBody.class);
 	        data.put("firstName", requestBody.getFirstName());
 	        data.put("lastName", requestBody.getLastName());
+	        data.put("email", requestBody.getEmail());
 	        data.put("age", requestBody.getAge());
 	        data.put("company", requestBody.getCompany());
 	        ApiFuture<WriteResult> result = updatedoc.set(data);

@@ -104,7 +104,7 @@ class Projects extends React.Component {
 
 	saveCustomer = () => {
 		const editor = {...this.state.editor, hidden: true};
-		fetch(`http://localhost:4567/customers/update/${editor.id}`, {
+		fetch(`${API_ENDPOINT}/customers/update/${editor.id}`, {
 			method: "PUT",
 			body: JSON.stringify(editor.data)
 		}).then(() => {
