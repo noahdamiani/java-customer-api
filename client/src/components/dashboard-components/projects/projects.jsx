@@ -5,6 +5,8 @@ import img2 from 'assets/images/users/2.jpg';
 import img3 from 'assets/images/users/3.jpg';
 import img4 from 'assets/images/users/4.jpg';
 
+import moment from "moment";
+
 import UserEditor from '../user-editor/editor';
 
 import {
@@ -173,7 +175,7 @@ class Projects extends React.Component {
 									<td>
 										{data.company}
 									</td>
-									<td>{enrolledAt ? enrolledAt : "N/A"}</td>
+									<td>{data.enrolledAt ? moment(data.enrolledAt).format("MMMM Do YYYY") : "N/A"}</td>
 									<td>
 										<div onClick={() => this.editCustomer(id, data, index)}>edit</div>
 										<div onClick={() => this.deleteCustomer(id, index)}>delete</div>
