@@ -1,6 +1,7 @@
 package noahs.ark.noahs_ark;
 
 import com.google.api.core.ApiFuture;
+
 import com.google.auth.oauth2.GoogleCredentials;
 import com.google.cloud.firestore.DocumentReference;
 import com.google.cloud.firestore.DocumentSnapshot;
@@ -26,6 +27,7 @@ import java.util.concurrent.ExecutionException;
 
 import java.io.FileInputStream;
 import java.io.InputStream;
+import java.time.Instant;
 
 class CustomerObj {
 	String id;
@@ -42,13 +44,22 @@ class RequestBody {
 	String lastName;
 	String company;
 	String email;
+	String enrolledAt;
+
 	int age;
 	
-	RequestBody(String firstName, String lastName, String company, String email, int age) {
+	RequestBody(
+			String firstName, 
+			String lastName, 
+			String company, 
+			String email, 
+			String enrolledAt,
+			int age) {
 		this.firstName = firstName;
 		this.lastName = lastName;
 		this.company = company;
 		this.email = email;
+		this.enrolledAt = enrolledAt;
 		this.age = age;
 	}
 	
@@ -66,6 +77,10 @@ class RequestBody {
 	
 	String getCompany() {
 		return this.company;
+	}
+	
+	String getEnrolledAt() {
+		return this.enrolledAt;
 	}
 	
 	String getEmail() {
@@ -99,6 +114,7 @@ public class App {
 	        data.put("email", requestBody.getEmail());
 	        data.put("age", requestBody.getAge());
 	        data.put("company", requestBody.getCompany());
+	        data.put("enrolledAt", Instant.now().toString());
 	        ApiFuture<WriteResult> result = newDoc.set(data);
 	        System.out.println("Update time : " + result.get().getUpdateTime());
 	        return "User Added with ID: " + newDoc.getId();
