@@ -76,6 +76,9 @@ public class App {
 		FirebaseApp.initializeApp(options);
 		Firestore db = FirestoreClient.getFirestore();
 
+		/**
+		 * ADD a new customer.
+		 */
 		post("/customers/add", (request, response) -> {
 			Map<String, Object> data = new HashMap<>();
 			DocumentReference newDoc = db.collection("customers").document();
@@ -91,6 +94,10 @@ public class App {
 	        System.out.println("Update time : " + result.get().getUpdateTime());
 	        return "User Added with ID: " + newDoc.getId();
 		});
+		
+		/**
+		 * UPDATE a customer by ID.
+		 */
 		put("/customers/update/:id", (request, response) -> {
 			Map<String, Object> data = new HashMap<>();
 			String id = request.params("id");
@@ -106,27 +113,10 @@ public class App {
 	        ApiFuture<WriteResult> result = updatedoc.set(data);
 	        return "User ID updated with: " + result.get().toString();
 		});
-    	options("/*",
-    	        (request, response) -> {
-
-    	            String accessControlRequestHeaders = request
-    	                    .headers("Access-Control-Request-Headers");
-    	            if (accessControlRequestHeaders != null) {
-    	                response.header("Access-Control-Allow-Headers",
-    	                        accessControlRequestHeaders);
-    	            }
-
-    	            String accessControlRequestMethod = request
-    	                    .headers("Access-Control-Request-Method");
-    	            if (accessControlRequestMethod != null) {
-    	                response.header("Access-Control-Allow-Methods",
-    	                        accessControlRequestMethod);
-    	            }
-
-    	            return "OK";
-    	        });
-
-    	before((request, response) -> response.header("Access-Control-Allow-Origin", "*"));
+		
+		/**
+    	 * GET all customers.
+    	 */
     	get("/customers", (req, res) -> {
     		CountDownLatch done = new CountDownLatch(1);
     		ApiFuture<QuerySnapshot> query = db.collection("customers").get();
@@ -154,6 +144,10 @@ public class App {
     		done.await();
     		return json;
     	});
+    	
+    	/**
+    	 * GET a singular customer by ID.
+    	 */
         get("/customers/:id", (req, res) -> {
         	CountDownLatch done = new CountDownLatch(1);
         	String id = req.params("id");
@@ -171,8 +165,36 @@ public class App {
         	
         	done.await();
     		return gson.toJson(customerObj);
- 
         });
+        
+        delete("/customers/delete/:id", (req, res) -> {
+        	String id = req.params("id");
+        	db.collection("customers")
+        	  .document(id)
+        	  .delete();
+        	return "Customer #" + id + " deleted.";
+        });
+		
+		/**
+		 * API options.
+		 */
+    	options("/*",
+    	        (request, response) -> {
+    	            String accessControlRequestHeaders = request
+    	                    .headers("Access-Control-Request-Headers");
+    	            if (accessControlRequestHeaders != null) {
+    	                response.header("Access-Control-Allow-Headers",
+    	                        accessControlRequestHeaders);
+    	            }
 
+    	            String accessControlRequestMethod = request
+    	                    .headers("Access-Control-Request-Method");
+    	            if (accessControlRequestMethod != null) {
+    	                response.header("Access-Control-Allow-Methods",
+    	                        accessControlRequestMethod);
+    	            }
+    	            return "OK";
+    	        });
+    	before((request, response) -> response.header("Access-Control-Allow-Origin", "*"));
     }
 }
